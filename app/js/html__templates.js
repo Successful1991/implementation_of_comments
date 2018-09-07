@@ -1,25 +1,25 @@
-export const htmlTemplates = {
-  addReply: (user) => {
-    let template = `<div class="comment__add__reply"> 
+//export
+let htmlTemplates = {
+  formAddReply: (user) => {
+    return  `<div class="comment__add__reply" id="comment__add__reply"> 
 						<div class="comment__add__reply__header">
-							<div class="comment__add__reply__header__name">Kurt Thompson</div>
+							<div class="comment__add__reply__header__name">${user}</div>
 							<div class="comment__add__reply__header__cancel">Cancel</div>
 						</div> 
 						<textarea class="comment__textarea" placeholder="Your Message"></textarea> 
 						<input type="submit" class="comment__button" value="Send">
-					</div>`
+					</div>`;
   },
-
   message: (text) => {
-    let template = `<li class="comments">
+    let template = `<li class="comments" data-commentId=${text.id} data-userId= ${text.author.id} >
 					<div class="comment">
-						<img src="img/user.jpg" class="comment__photo">
+						<img src=${text.author.avatar} class="comment__photo">
 						<div>
 							<div>
-								<span class="comment__name">Kurt Thompson </span>
-								<time class="comment__date">2015-07-06 at 13:57</time>
+								<span class="comment__name">${text.author.name} </span>
+								<time class="comment__date">${text.created_at}</time>
 							</div>
-							<p class="comment__text">If not everyone makes money blogging, why is blogging so popular?</p>
+							<p class="comment__text">${text.content}</p>
 							<div class="actions">
 								<div class="actions__icon actions__edit">Edit</div>
 								<div class="actions__icon actions__delete">Delete</div>
@@ -27,26 +27,19 @@ export const htmlTemplates = {
 							</div>
 						</div>
 					</div>
-					<div class="comment__add__reply">
-						<div class="comment__add__reply__header">
-							<div class="comment__add__reply__header__name">Kurt Thompson</div>
-							<div class="comment__add__reply__header__cancel">Cancel</div>
-						</div>
-						<textarea class="comment__textarea" placeholder="Your Message"></textarea>
-						<input type="submit" class="comment__button" value="Send">
-					</div>
 					<ul class="reply"></ul>
-		</li>`
+		</li>`;
+    return template
   },
-  reply:(nameReply,text) => {
-    let template = `<li class="comment__reply">
-							<img src="img/user.jpg" class="comment__photo">
+  reply: (nameReply,text) => {
+    return  `<li class="comment__reply">
+							<img src= ${text.author.avatar} class="comment__photo">
 							<div>
-								<span class="comment__name">Kurt Thompson </span>
-								<span class="comment__name-reply">Kurt Thompson </span>
-								<time class="comment__date">2015-07-06 at 13:57</time>
-								<p class="comment__text">If not everyone makes money blogging, why is blogging so popular?</p>
+								<span class="comment__name">${text.author.name}</span>
+								<span class="comment__name-reply">${nameReply}</span>
+								<time class="comment__date">${text.created_at}</time>
+								<p class="comment__text">${text.content}</p>
 							</div>
-					</li>`
-  },
+					</li>`;
+  }
 };

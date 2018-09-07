@@ -175,6 +175,7 @@ body{
           }
         }
         &__cancel{
+          cursor: pointer;
           &:before{
             background: url("../img/icons/times-solid.svg") no-repeat center center;
             background-size: cover;
