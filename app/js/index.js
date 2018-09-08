@@ -1,23 +1,29 @@
 //import './html__templates.js';
 window.addEventListener( 'load', () => {
-  const myId = 1;
+
+  const user = {
+    id: 1,
+    email: '19successful91@gmail.com'
+  };
+  let commentsAll;
 
   function getComment() {
     $.ajax({
-      url: 'http://frontend-test.pingbull.com/pages/19successful91@gmail.com/comments',
+      url: 'http://frontend-test.pingbull.com/pages/'+user.email+'/comments',
       type:'GET',
       data: {
         count: 5,
         offset: 0
       },
       success:function (commentList) {
+        commentsAll = commentList;
         renderComment(commentList);
       }
     });
   }
   function setComment(message,parentName = null) {
     $.ajax({
-      url: 'http://frontend-test.pingbull.com/pages/19successful91@gmail.com/comments',
+      url: 'http://frontend-test.pingbull.com/pages/'+user.email+'/comments',
       type:'POST',
       dateType: 'json',
       data: {
@@ -32,7 +38,7 @@ window.addEventListener( 'load', () => {
   function editComment(message,messageId) {
     console.log(message,messageId);
     $.ajax({
-      url: 'http://frontend-test.pingbull.com/pages/19successful91@gmail.com/comments/'+ messageId,
+      url: 'http://frontend-test.pingbull.com/pages/'+user.email+'/comments/'+ messageId,
       dateType: 'json',
       type:'PUT',
       data: {
@@ -46,7 +52,7 @@ window.addEventListener( 'load', () => {
   }
   function deleteComment(comment__id) {
     $.ajax({
-      url: 'http://frontend-test.pingbull.com/pages/19successful91@gmail.com/comments/' + comment__id,
+      url: 'http://frontend-test.pingbull.com/pages/'+user.email+'/comments/' + comment__id,
       type:'POST',
       data: {
         _method: 'DELETE'
@@ -57,38 +63,68 @@ window.addEventListener( 'load', () => {
     });
   }
 
-  function renderComment(comments) {
+  // function renderComment(comments) {
+  //   $('#comments__all').empty();
+  //
+  //   $.each(comments,(i,comment) => {
+  //     comment.created_at = changeFormatDate(comment.created_at);
+  //     $('#comments__all').append( htmlTemplates.message(comment));
+  //
+  //     if(comment.author.id === user.id){
+  //       addActionsTemplate('comment',true,true,true);
+  //     }else {
+  //       addActionsTemplate('comment',false,false,true);
+  //     }
+  //
+  //     if(comment.children.length > 0){
+  //
+  //       comment.children.forEach( reply => {
+  //         reply.created_at = changeFormatDate(reply.created_at);
+  //         $('#comments__all')
+  //           .find('.reply')
+  //           .eq(i)
+  //           .append( htmlTemplates.reply( comment.author.name, reply));
+  //
+  //         if(reply.author.id === user.id){
+  //           addActionsTemplate('comment__reply',true,true,false)
+  //         }
+  //       });
+  //     }
+  //   });
+  //   addEventComment();
+  // }
+  function renderComment( comments ) {
     $('#comments__all').empty();
 
     $.each(comments,(i,comment) => {
-      comment.created_at = changeFormatDate(comment.created_at);
+      comment.created_at = changeFormatDate(comment.created_at);  // edit format date
       $('#comments__all').append( htmlTemplates.message(comment));
 
-      if(comment.author.id === myId){
+      if( comment.author.id === user.id ){
         addActionsTemplate('comment',true,true,true);
-      }else {
+      } else {
         addActionsTemplate('comment',false,false,true);
       }
 
       if(comment.children.length > 0){
-
-        comment.children.forEach( reply => {
-          reply.created_at = changeFormatDate(reply.created_at);
-          $('#comments__all')
-            .find('.reply')
-            .eq(i)
-            .append( htmlTemplates.reply( comment.author.name, reply));
-
-          if(reply.author.id === myId){
-            addActionsTemplate('comment__reply',true,true,false)
-          }
-        });
+        renderCommentReply(comment,i);
       }
     });
     addEventComment();
   }
+  function renderCommentReply(comment,i){
+    comment.children.forEach( reply => {
+      reply.created_at = changeFormatDate(reply.created_at); // edit format date
+      $('#comments__all')
+        .find('.reply')
+        .eq(i)
+        .append( htmlTemplates.reply( comment.author.name, reply));
 
-
+      if(reply.author.id === user.id){
+        addActionsTemplate('comment__reply',true,true,false);
+      }
+    });
+  }
   function addActionsTemplate(commentClass,edit,del,reply) {
     $('#comments__all')
       .find('.'+commentClass)
@@ -101,61 +137,64 @@ window.addEventListener( 'load', () => {
     $('.comments').find('.actions').each( (i,comment) => {
       $(comment).click( (e) => {
         if($(e.target).hasClass('actions__edit')){
-            actionCommentEdit($(e.target));
+          actionCommentEdit($(e.target));
         } else if($(e.target).hasClass('actions__delete')){
-            actionCommentDelete($(e.target));
+          actionCommentDelete($(e.target));
         } else if($(e.target).hasClass('actions__reply')){
-            actionCommentReply($(e.target));
+          actionCommentReply($(e.target));
         }
       });
     });
   }
 
-
-
-
   function actionCommentEdit(e) {
-    $('#comment__add__reply').remove();
-    //const htmlBlockComment = e.closest('.comments');
+    let comment = getItemObjectWhichClick(e);
     const htmlBlockComment = e.closest('li');
-    const commentId = htmlBlockComment.attr('data-commentId');
-    const userName = htmlBlockComment.find('.comment__name').eq(0).text();
-    const commentText = htmlBlockComment.find('.comment__text').eq(0).text();
+    $('#comment__add__reply').remove();
 
-    if(htmlBlockComment.hasClass('comments')){
+    if( htmlBlockComment.hasClass('comments') ){
       htmlBlockComment
         .find('.comment')
-        .after( htmlTemplates.formAddReply(userName,true,commentText) );
-    }else if(htmlBlockComment.hasClass('comment__reply')){
+        .after(
+          htmlTemplates.formAddReply(comment.author.name ,true,comment.content)
+        );
+
+    } else if( htmlBlockComment.hasClass('comment__reply') ){
       htmlBlockComment
-        .after( htmlTemplates.formAddReply(userName,true,commentText) );
+        .after(
+          htmlTemplates.formAddReply(comment.author.name ,true,comment.content)
+        );
     }
 
     addEventFormReplyCancel ();
-    addEventFormEditSend (commentId);
+    addEventFormSend ( editComment, comment.id );
   }
 
   function actionCommentDelete(e) {
-    const commentId = e.closest('li').attr('data-commentId');
-    deleteComment( commentId );
+    deleteComment( e.closest('li').attr('data-commentId') );
   }
 
   function actionCommentReply(e) {
+    let comment = getItemObjectWhichClick(e);
+    const htmlBlockComment = e.closest('li');
     $('#comment__add__reply').remove();
-    const htmlBlockComment = e.closest('.comments');
-    const commentId = htmlBlockComment.attr('data-commentId');
-    const userName = htmlBlockComment.find('.comment').find('.comment__name').text();
 
     htmlBlockComment
       .find('.comment')
-      .after( htmlTemplates.formAddReply(userName) );  //added the answer form to html
+      .after( htmlTemplates.formAddReply(comment.author.name) );  //added the answer form to html
 
     addEventFormReplyCancel ();
-    addEventFormReplySend (commentId);
+    addEventFormSend (setComment,comment.id);
   }
 
-
-
+  function getItemObjectWhichClick(e){
+    let comment;
+    const htmlBlockComment = e.closest('li');
+    commentsAll.forEach( el => {
+      if(+el.id === +htmlBlockComment.attr('data-commentId'))comment = el;
+    });
+    return comment;
+  }
 
 
   function addEventFormReplyCancel (){
@@ -166,26 +205,12 @@ window.addEventListener( 'load', () => {
       });
   }
 
-  function addEventFormReplySend (parentName){
-    $('#comment__add__reply')
-      .find('.comment__button')
-      .click( (e) => {
-
-        //console.log(  $(e.target).siblings('textarea')[0].value );
-        if($(e.target).siblings('textarea')[0].value){
-          setComment($(e.target).siblings('textarea')[0].value,parentName);
-        }
-
-        $('#comment__add__reply').remove();
-      });
-  }
-
-  function addEventFormEditSend (parentName){
+  function addEventFormSend (actionName ,parentName){
     $('#comment__add__reply')
       .find('.comment__button')
       .click( (e) => {
         if($(e.target).siblings('textarea')[0].value){
-          editComment($(e.target).siblings('textarea')[0].value,parentName);
+          actionName($(e.target).siblings('textarea')[0].value,parentName);
         }
 
         $('#comment__add__reply').remove();
@@ -193,7 +218,7 @@ window.addEventListener( 'load', () => {
   }
 
   function changeFormatDate(date) {
-    return moment(date).format('YYYY-MM-DD a hh:mm')
+    return moment(date).format('YYYY-MM-DD a hh:mm');
   }
   
   function addComment() {
