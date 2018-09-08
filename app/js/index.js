@@ -12,7 +12,7 @@ window.addEventListener( 'load', () => {
       url: 'http://frontend-test.pingbull.com/pages/'+user.email+'/comments',
       type:'GET',
       data: {
-        count: 5,
+        count: 2,
         offset: 0
       },
       success:function (commentList) {
@@ -62,37 +62,23 @@ window.addEventListener( 'load', () => {
       }
     });
   }
+  function loadComment() {
+    console.log(commentsAll.length);
+    $.ajax({
+      url: 'http://frontend-test.pingbull.com/pages/'+user.email+'/comments',
+      type:'GET',
+      data: {
+        count: commentsAll.length + 5 ,
+        offset: 0
+      },
+      success:function (commentList) {
+        commentsAll = commentList;
+        renderComment(commentsAll);
+      }
+    });
+  }
 
-  // function renderComment(comments) {
-  //   $('#comments__all').empty();
-  //
-  //   $.each(comments,(i,comment) => {
-  //     comment.created_at = changeFormatDate(comment.created_at);
-  //     $('#comments__all').append( htmlTemplates.message(comment));
-  //
-  //     if(comment.author.id === user.id){
-  //       addActionsTemplate('comment',true,true,true);
-  //     }else {
-  //       addActionsTemplate('comment',false,false,true);
-  //     }
-  //
-  //     if(comment.children.length > 0){
-  //
-  //       comment.children.forEach( reply => {
-  //         reply.created_at = changeFormatDate(reply.created_at);
-  //         $('#comments__all')
-  //           .find('.reply')
-  //           .eq(i)
-  //           .append( htmlTemplates.reply( comment.author.name, reply));
-  //
-  //         if(reply.author.id === user.id){
-  //           addActionsTemplate('comment__reply',true,true,false)
-  //         }
-  //       });
-  //     }
-  //   });
-  //   addEventComment();
-  // }
+
   function renderComment( comments ) {
     $('#comments__all').empty();
 
@@ -228,6 +214,7 @@ window.addEventListener( 'load', () => {
 
   getComment();
   document.getElementById('comment__add__input').addEventListener( 'click', addComment );
+  document.getElementById('comments__load').addEventListener( 'click', loadComment );
 });
 
 
