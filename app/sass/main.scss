@@ -232,6 +232,7 @@ body{
     margin-right: 5px;
     white-space: nowrap;
     &-reply{
+      font-size: 15px;
       color: #b6b6b6;
       white-space: nowrap;
       &:before{
@@ -248,6 +249,7 @@ body{
     }
   }
   &__date{
+    font-size: 15px;
     color: #B6B6B6;
     white-space: nowrap;
     &:before{

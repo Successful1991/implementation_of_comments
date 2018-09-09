@@ -6,7 +6,7 @@ const browserSync = require('browser-sync').create();
 
 // --server-- //
 gulp.task('server', () => {
-  gulp.src('app')
+  gulp.src('')
     .pipe(server({
       livereload: true,
       open: true,
