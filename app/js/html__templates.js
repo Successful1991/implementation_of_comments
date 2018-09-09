@@ -1,4 +1,3 @@
-// export
 const htmlTemplates = {
   formAddReply: (user, message = false, text = '') => {
     const template = `

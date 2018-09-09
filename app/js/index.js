@@ -1,13 +1,9 @@
-// import { htmlTemplates } from './html__templates.js';
 window.addEventListener('load', () => {
+  let commentsMessage;
   const user = {
     id: 1,
     email: '19successful91@gmail.com',
   };
-  function changeFormatDate(date) {
-    return moment(date).format('YYYY-MM-DD a hh:mm');
-  }
-  let commentsMessage;
   const urlComment = `http://frontend-test.pingbull.com/pages/${user.email}/comments/`;
   const commentMethod = {
     getComment: (counts = 2) => {
@@ -25,7 +21,6 @@ window.addEventListener('load', () => {
         },
       });
     },
-
     setComment: (message, parentName = null) => {
       $.ajax({
         url: urlComment,
@@ -40,7 +35,6 @@ window.addEventListener('load', () => {
         },
       });
     },
-
     editComment: (message, messageId) => {
       $.ajax({
         url: urlComment + messageId,
@@ -55,7 +49,6 @@ window.addEventListener('load', () => {
         },
       });
     },
-
     deleteComment: (commentId) => {
       $.ajax({
         url: urlComment + commentId,
@@ -68,7 +61,6 @@ window.addEventListener('load', () => {
         },
       });
     },
-
     loadComment: () => {
       $.ajax({
         url: urlComment,
@@ -84,6 +76,7 @@ window.addEventListener('load', () => {
       });
     },
   };
+
   function addEventFormReplyCancel() {
     $('#comment__add__reply')
       .find('.comment__add__reply__header__cancel')
@@ -128,8 +121,8 @@ window.addEventListener('load', () => {
   }
 
   function getItemObjectWhichClick(e) {
-    let comment;
     const htmlBlockComment = e.closest('li');
+    let comment;
     commentsMessage.forEach((el) => {
       if (+el.id === +htmlBlockComment.attr('data-commentId')) {
         comment = el;
@@ -144,7 +137,6 @@ window.addEventListener('load', () => {
 
   function actionCommentEdit(e) {
     const comment = getItemObjectWhichClick(e);
-    console.log(comment);
     const htmlBlockComment = e.closest('li');
     $('#comment__add__reply').remove();
     if (htmlBlockComment.hasClass('comments')) {
@@ -180,6 +172,7 @@ window.addEventListener('load', () => {
     addEventFormReplyCancel();
     addEventFormSend(commentMethod.setComment, comment.id);
   }
+
   function addEventComment() {
     // hangs the event handler on the button wrapper, which checks the pressed element and
     // calls the desired function so as not to generate a bunch of event handlers.
@@ -201,7 +194,6 @@ window.addEventListener('load', () => {
     // clear the block with comments and pars all the
     // comments again that we received
     $('#comments__all').empty();
-
     $.each(comments, (i, el) => {
       const comment = el;
       comment.created_at = changeFormatDate(comment.created_at); // edit format date
@@ -225,6 +217,9 @@ window.addEventListener('load', () => {
     commentMethod.setComment(message);
   }
 
+  function changeFormatDate(date) {
+    return moment(date).format('YYYY-MM-DD a hh:mm');
+  }
   commentMethod.getComment();
   document.getElementById('comment__add__input').addEventListener('click', addComment);
   document.getElementById('comments__load').addEventListener('click', commentMethod.loadComment);

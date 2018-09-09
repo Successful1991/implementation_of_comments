@@ -5,14 +5,6 @@ module.exports = {
         "jquery":true
     },
     "extends": "airbnb-base",
-    //"extends": "eslint:recommended",
-    // "parserOptions": {
-    //     "ecmaFeatures": {
-    //         "jsx": false
-    //     },
-    //     "ecmaVersion": 2018,
-    //     "sourceType": "module"
-    // },
     "rules": {
       "no-console": 0,
       "init-declarations": 0,
@@ -24,10 +16,6 @@ module.exports = {
         ],
         "linebreak-style": 0,
         "quotes": 0,
-        // "semi": [
-        //     "error",
-        //     "always"
-        // ],
       "no-inline-comments": 0,
     },
   "globals": {
